@@ -37,7 +37,7 @@ const Container = styled(Flex)`
 	border-radius: 16px;
 `;
 
-const login = () => {
+const Loginpage = () => {
 	const router = useRouter();
 	const { callback } = router.query;
 	const [email, setEmail] = useState('');
@@ -153,4 +153,4 @@ const login = () => {
 	);
 };
 
-export default login;
+export default Loginpage;
