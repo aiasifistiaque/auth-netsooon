@@ -56,7 +56,7 @@ const Kycpage = () => {
 				statusData.data.reviewStatus == 'completed'
 			) {
 				if (statusData.data.reviewResult.reviewAnswer == 'GREEN') {
-					router.replace(`${callback}&token=${token}`);
+					router.replace(`${callback}?token=${token}`);
 				}
 			}
 		}
