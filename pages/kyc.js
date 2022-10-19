@@ -19,7 +19,7 @@ const Kycpage = () => {
 
 	const kycRef = useRef(null);
 
-	const accessToken = '_act-sbx-797279ad-3080-4050-995a-b521de2e254f';
+	const accessToken = '';
 	const { data, isLoading, isError } = useGetAccessTokenQuery(token);
 	const {
 		data: statusData,
