@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useLoginMutation } from '../store/services/apiService';
+import { useRegisterMutation } from '../store/services/apiService';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 
 import {
 	Flex,
@@ -16,25 +17,33 @@ import {
 import Link from 'next/link';
 import { Page, Container } from '../components/styled/AuthComponents';
 
-const Loginpage = () => {
+const SignupPage = () => {
 	const router = useRouter();
 	const { callback } = router.query;
+
+	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [confirm, setConfirm] = useState('');
+	const [age, setAge] = useState('');
 
-	const [login, result] = useLoginMutation();
+	const [register, result] = useRegisterMutation();
 
 	/**functions */
 	const submitFrom = e => {
 		e.preventDefault();
-		login({ email, password });
+		register({ name, email, password, confirm, age });
 	};
 
 	/**useEffects */
 
 	useEffect(() => {
 		if (result.isSuccess) {
-			router.push(`/kyc?token=${result.data.token}&callback=${callback}`);
+			router.push(
+				`/kyc?token=${
+					result?.data?.token && result.data.token
+				}&callback=${callback}`
+			);
 		}
 	}, [result.isSuccess]);
 
@@ -52,19 +61,42 @@ const Loginpage = () => {
 	const inputs = (
 		<>
 			<Input
-				placeholder='Email'
-				value={email}
-				onChange={e => setEmail(e.target.value)}
-				size='lg'
+				placeholder='Full Name'
+				size='md'
+				value={name}
+				onChange={e => setName(e.target.value)}
 				required
 			/>
 			<Input
-				value={password}
-				placeholder='Password'
-				size='lg'
-				type='password'
+				placeholder='Email'
+				size='md'
+				value={email}
+				onChange={e => setEmail(e.target.value)}
 				required
+			/>
+			<Input
+				placeholder='Age'
+				size='md'
+				value={age}
+				onChange={e => setAge(e.target.value)}
+				required
+				type='number'
+			/>
+			<Input
+				placeholder='Password'
+				size='md'
+				type='password'
+				value={password}
 				onChange={e => setPassword(e.target.value)}
+				required
+			/>
+			<Input
+				placeholder='Confirm Password'
+				size='md'
+				type='password'
+				value={confirm}
+				onChange={e => setConfirm(e.target.value)}
+				required
 			/>
 		</>
 	);
@@ -80,13 +112,13 @@ const Loginpage = () => {
 
 	const submitButton = (
 		<Button
-			size='lg'
+			size='md'
 			type='submit'
 			isLoading={result.isLoading}
 			loadingText='Processing'
 			backgroundColor='#003399'
 			colorScheme='facebook'>
-			Log In
+			Sign Up
 		</Button>
 	);
 
@@ -101,9 +133,9 @@ const Loginpage = () => {
 	const signupButton = (
 		<Flex mt={16} alignItems='center' flexDirection='column'>
 			<Text>Do not have an account?</Text>
-			<Link href={`/signup?callback=${callback}`}>
+			<Link href={`/login?callback=${callback}`}>
 				<Text size='lg' cursor='pointer' fontWeight={700}>
-					Sign Up
+					Log In
 				</Text>
 			</Link>
 		</Flex>
@@ -112,7 +144,7 @@ const Loginpage = () => {
 	return (
 		<Page>
 			<Container boxShadow='base'>
-				<Stack spacing={8} minW={300} maxW={400}>
+				<Stack spacing={4} minW={300} maxW={400}>
 					<>{title}</>
 					<form onSubmit={submitFrom} style={{ width: '100%' }}>
 						<Stack spacing={3}>
@@ -129,4 +161,4 @@ const Loginpage = () => {
 	);
 };
 
-export default Loginpage;
+export default SignupPage;
