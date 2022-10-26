@@ -13,7 +13,7 @@ import {
 const Kycpage = () => {
 	const router = useRouter();
 	const dispatch = useDispatch();
-	const { callback, token } = router.query;
+	const { callback, token, scheme } = router.query;
 
 	const [id, setId] = useState('');
 
@@ -56,6 +56,10 @@ const Kycpage = () => {
 				statusData.data.reviewStatus == 'completed'
 			) {
 				if (statusData.data.reviewResult.reviewAnswer == 'GREEN') {
+					console.log('redirecting to callback');
+					if (scheme) {
+						router.replace(`${scheme}?token=${token}`);
+					}
 					router.replace(`${callback}?token=${token}`);
 				}
 			}
