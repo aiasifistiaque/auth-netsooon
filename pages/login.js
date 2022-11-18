@@ -9,15 +9,25 @@ import {
 	Stack,
 	Input,
 	Button,
-	Alert,
-	AlertIcon,
-	AlertDescription,
+	useToast,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { Page, Container } from '../components/styled/AuthComponents';
 
+/**
+ * LOGIN PAGE FOR AUTHENTICATOR
+ * if login is successful
+ * 	1) checks for the age if > 17
+ * 		- if > 17 : sends to kyc page
+ * 		- if < 17 & unverified sends to choosing guardian page
+ * 		- if < 17 & pending verification sends to waiting page
+ * 		- if < 17 & verified sends to netsooon junior page
+ *
+ */
+
 const Loginpage = () => {
 	const router = useRouter();
+	const toast = useToast();
 	const { callback } = router.query;
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -27,16 +37,60 @@ const Loginpage = () => {
 	/**functions */
 	const submitFrom = e => {
 		e.preventDefault();
-		login({ email, password });
+		login({ email, password, callback });
 	};
 
 	/**useEffects */
 
 	useEffect(() => {
+		if (result.isLoading) return;
+
 		if (result.isSuccess) {
-			router.push(`/kyc?token=${result.data.token}&callback=${callback}`);
+			if (result?.data?.user?.age && result.data.user.age > 17) {
+				router.push(`/kyc?token=${result.data.token}&callback=${callback}`);
+			} else {
+				if (
+					result?.data?.user?.verificationStatus &&
+					result.data.user.verificationStatus == 'init'
+				) {
+					router.push(
+						`/setguardian?token=${result.data.token}&callback=${callback}`
+					);
+				} else if (
+					result?.data?.user?.verificationStatus &&
+					result.data.user.verificationStatus == 'pending'
+				) {
+					router.push(
+						`/pending?token=${result.data.token}&callback=${callback}`
+					);
+				} else if (
+					result?.data?.user?.verificationStatus &&
+					result.data.user.verificationStatus == 'verified'
+				) {
+					router.replace(
+						`${result?.data?.callback}?token=${result?.data?.token}`
+					);
+				}
+			}
 		}
 	}, [result.isSuccess]);
+
+	useEffect(() => {
+		if (result.isLoading) return;
+		if (result.isError) {
+			toast({
+				position: 'top',
+				title: 'Could not log in',
+				status: 'error',
+				variant: 'left-accent',
+				isClosable: true,
+				description: result?.error?.data?.message && result.error.data.message,
+				containerStyle: {
+					minWidth: '300px',
+				},
+			});
+		}
+	}, [result.isLoading]);
 
 	/**Components */
 	const title = (
@@ -67,15 +121,6 @@ const Loginpage = () => {
 				onChange={e => setPassword(e.target.value)}
 			/>
 		</>
-	);
-
-	const error = result.isError && (
-		<Alert status='error'>
-			<AlertIcon />
-			<AlertDescription>
-				{result?.error?.data?.message && result.error.data.message}
-			</AlertDescription>
-		</Alert>
 	);
 
 	const submitButton = (
@@ -117,7 +162,6 @@ const Loginpage = () => {
 					<form onSubmit={submitFrom} style={{ width: '100%' }}>
 						<Stack spacing={3}>
 							<>{inputs}</>
-							<>{error}</>
 							<>{submitButton}</>
 							<>{termsOfUse}</>
 						</Stack>

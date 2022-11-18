@@ -42,6 +42,15 @@ export const userApi = createApi({
 				};
 			},
 		}),
+		assignGuardian: builder.mutation({
+			query(body) {
+				return {
+					url: `/auth/assign`,
+					method: 'POST',
+					body,
+				};
+			},
+		}),
 		sendOtp: builder.mutation({
 			query(body) {
 				return {
@@ -73,5 +82,9 @@ export const userApi = createApi({
 	}),
 });
 
-export const { useLoginMutation, useRegisterMutation, useGetSelfQuery } =
-	userApi;
+export const {
+	useLoginMutation,
+	useRegisterMutation,
+	useGetSelfQuery,
+	useAssignGuardianMutation,
+} = userApi;

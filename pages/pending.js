@@ -44,7 +44,7 @@ const Pendingpage = () => {
 				height='80'
 				width='80'
 				radisu={1}
-				color='#888'
+				color='#003399'
 				ariaLabel='puff-loading'
 				wrapperStyle={{}}
 				wrapperClass=''

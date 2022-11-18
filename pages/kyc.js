@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Heading, Stack, Button, Center } from '@chakra-ui/react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Heading, Center } from '@chakra-ui/react';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import SumsubWebSdk from '@sumsub/websdk-react';
 import snsWebSdk from '@sumsub/websdk';
@@ -12,7 +12,6 @@ import {
 
 const Kycpage = () => {
 	const router = useRouter();
-	const dispatch = useDispatch();
 	const { callback, token, scheme } = router.query;
 
 	const [id, setId] = useState('');
@@ -57,9 +56,7 @@ const Kycpage = () => {
 			) {
 				if (statusData.data.reviewResult.reviewAnswer == 'GREEN') {
 					console.log('redirecting to callback');
-					if (scheme) {
-						router.replace(`${scheme}?token=${token}`);
-					}
+
 					router.replace(`${callback}?token=${token}`);
 				}
 			}

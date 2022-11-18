@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRegisterMutation } from '../store/services/apiService';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
-
 import {
 	Flex,
 	Text,
@@ -13,6 +11,7 @@ import {
 	Alert,
 	AlertIcon,
 	AlertDescription,
+	useToast,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { Page, Container } from '../components/styled/AuthComponents';
@@ -20,6 +19,7 @@ import { Page, Container } from '../components/styled/AuthComponents';
 const SignupPage = () => {
 	const router = useRouter();
 	const { callback } = router.query;
+	const toast = useToast();
 
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
@@ -39,13 +39,37 @@ const SignupPage = () => {
 
 	useEffect(() => {
 		if (result.isSuccess) {
-			router.push(
-				`/kyc?token=${
-					result?.data?.token && result.data.token
-				}&callback=${callback}`
-			);
+			if (result?.data?.data && result.data.data.age > 17) {
+				router.push(
+					`/kyc?token=${
+						result?.data?.token && result.data.token
+					}&callback=${callback}`
+				);
+			} else {
+				router.push(
+					`/setguardian?token=${
+						result?.data?.token && result.data.token
+					}&callback=${callback}`
+				);
+			}
 		}
 	}, [result.isSuccess]);
+
+	useEffect(() => {
+		if (result.isError) {
+			toast({
+				position: 'top',
+				title: 'Error Signing Up',
+				status: 'error',
+				variant: 'left-accent',
+				isClosable: true,
+				description: result?.error?.data?.message && result.error.data.message,
+				containerStyle: {
+					minWidth: '300px',
+				},
+			});
+		}
+	}, [result.isLoading]);
 
 	/**Components */
 	const title = (
@@ -149,7 +173,7 @@ const SignupPage = () => {
 					<form onSubmit={submitFrom} style={{ width: '100%' }}>
 						<Stack spacing={3}>
 							<>{inputs}</>
-							<>{error}</>
+							{/* <>{error}</> */}
 							<>{submitButton}</>
 							<>{termsOfUse}</>
 						</Stack>
