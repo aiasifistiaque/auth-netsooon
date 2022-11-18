@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { Page, Container } from '../components/styled/AuthComponents';
 import { useAssignGuardianMutation } from '../store/services/apiService';
 
-const setguardian = () => {
+const Setguardian = () => {
 	const toast = useToast();
 	const router = useRouter();
 	const { token } = router.query;
@@ -102,4 +102,4 @@ const setguardian = () => {
 	);
 };
 
-export default setguardian;
+export default Setguardian;
